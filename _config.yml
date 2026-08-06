@@ -17,7 +17,11 @@ url: "https://fasih2611.github.io"
 baseurl: ""
 
 permalink: /blog/:year/:month/:day/:title/
-paginate: false
+
+# Build in your local timezone, and don't silently drop posts dated "today"
+# when it is still yesterday in UTC.
+timezone: Asia/Karachi
+future: true
 
 plugins:
   - jekyll-feed
