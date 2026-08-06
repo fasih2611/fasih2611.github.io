@@ -3,6 +3,8 @@ title: "Fasih Tariq"
 permalink: /
 ---
 
+{% include diffusion-banner.html %}
+
 <!-- TODO: replace with your actual affiliation and one-line pitch -->
 Master's student working on generative models. My thesis studies **flow matching**
 and **mean flows** — specifically why one-step generative samplers lose sample

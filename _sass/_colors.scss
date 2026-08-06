@@ -1,13 +1,15 @@
-// Woodland palette — shadows the theme's _sass/_colors.scss.
+// Dark woodland palette — shadows the theme's _sass/_colors.scss.
 // Garth derives headers, borders, code blocks and footers from these,
 // so changing them here restyles the whole site.
 
-$bodyColour: #3B2F21;                  // dark bark
-$headingColour: darken($bodyColour, 5%);
-$linkColour: #2F6B43;                  // forest green
-$hoverColour: darken($linkColour, 10%);
-$captionColour: lighten($headingColour, 40%);
+$backgroundColour: #241B12;            // dark walnut
+$bodyColour: #E3D5B8;                  // parchment
+$headingColour: #F2E7CE;               // brighter than body, for headings
+$linkColour: #94C46B;                  // moss green, legible on dark wood
+$hoverColour: lighten($linkColour, 10%);
+$captionColour: darken($bodyColour, 30%);
 $white: #fff;
 
-$backgroundColour: #E9DCC2;            // warm oak / sunlit parchment
-$codeBackgroundColour: darken($backgroundColour, 5%);
+// Garth defines this as darken($backgroundColour, 5%), which is nearly black
+// on a dark theme. Lift code blocks off the page instead.
+$codeBackgroundColour: lighten($backgroundColour, 5%);
