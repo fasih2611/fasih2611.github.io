@@ -1,0 +1,37 @@
+# ---- Edit these ----
+title: Fasih Tariq
+tagline: Generative models, diffusion, and flow matching
+email: fasihtariq2611@gmail.com
+description: >-
+  Personal site of Fasih Tariq — research on generative models,
+  flow matching, and diffusion.
+github_username: fasih2611
+# Optional: delete the line if you don't want the link shown
+scholar_url:
+linkedin_url:
+# Drop a cv.pdf in assets/ and set this to /assets/cv.pdf to show a CV link
+cv_url:
+# --------------------
+
+url: "https://fasih2611.github.io"
+baseurl: ""
+
+permalink: /blog/:year/:month/:day/:title/
+paginate: false
+
+plugins:
+  - jekyll-feed
+  - jekyll-seo-tag
+
+exclude:
+  - README.md
+  - Gemfile
+  - Gemfile.lock
+  - vendor
+
+defaults:
+  - scope:
+      path: ""
+      type: posts
+    values:
+      layout: post
