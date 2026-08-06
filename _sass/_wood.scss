@@ -130,10 +130,12 @@ body {
 }
 
 // Dim and scattered at t=0, bright and resolved at t=1, then back.
+// The resolved state holds for roughly 40% of the cycle so there is time to
+// actually read the shape.
 @keyframes flow-transport {
-  0%,   6%  { transform: translate(var(--x0), var(--y0)); opacity: 0.30; }
-  46%, 74%  { transform: translate(var(--x1), var(--y1)); opacity: 1; }
-  100%      { transform: translate(var(--x0), var(--y0)); opacity: 0.30; }
+  0%,   5%  { transform: translate(var(--x0), var(--y0)); opacity: 0.28; }
+  38%, 78%  { transform: translate(var(--x1), var(--y1)); opacity: 1; }
+  100%      { transform: translate(var(--x0), var(--y0)); opacity: 0.28; }
 }
 
 // Reduced-motion: same transport, run slowly. Set `animation: none` on

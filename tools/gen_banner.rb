@@ -6,42 +6,51 @@
 # transform between them. Straight-line interpolation is the point: it is the
 # rectified-flow / optimal-transport path, x_t = (1-t)x_0 + t x_1.
 #
+# Legibility note: most of the dots land on the silhouette outline rather than
+# the interior. Edges are what make a shape recognisable at low point counts —
+# a uniformly filled polygon just reads as a smudge.
+#
 # Run from the repo root after editing:
 #   ruby tools/gen_banner.rb > _includes/diffusion-banner.html
 
-SEED     = 20260807
-N_DOTS   = 320
-WIDTH    = 1200.0
-HEIGHT   = 240.0
-BASELINE = 208.0
+SEED       = 20260807
+N_DOTS     = 420
+EDGE_SHARE = 0.62   # fraction of dots placed along the outline
+FLOOR_SHARE = 0.07  # fraction placed along the forest floor
+WIDTH      = 1200.0
+HEIGHT     = 240.0
+BASELINE   = 206.0
 
 rng = Random.new(SEED)
 
-# --- target shape: a treeline of pines -------------------------------------
+# Fewer, larger trees: density per tree is what makes the shape readable.
 # [centre x, base y, half-width, height]
 TREES = [
-  [170,  BASELINE,  46,  96],
-  [350,  BASELINE,  34,  70],
-  [600,  BASELINE,  78, 170],
-  [850,  BASELINE,  36,  74],
-  [1030, BASELINE,  50, 104],
+  [300,  BASELINE, 74, 132],
+  [600,  BASELINE, 96, 176],
+  [900,  BASELINE, 78, 140],
 ].freeze
 
-# A pine as three stacked triangles plus a trunk.
-def tree_polygons(cx, base, half, height)
-  polys = []
-  3.times do |tier|
-    t     = tier / 3.0
-    apex  = base - height * (0.55 + 0.45 * t)
-    bot   = base - height * (0.42 * t)
-    w     = half * (1.0 - 0.30 * t)
-    polys << [[cx - w, bot], [cx, apex], [cx + w, bot]]
-  end
-  tw = [half * 0.10, 3.0].max
-  polys << [[cx - tw, base], [cx - tw, base - height * 0.16],
-            [cx + tw, base - height * 0.16], [cx + tw, base]]
-  polys
+# One closed polygon per tree — a zigzag pine profile. A single silhouette
+# beats three overlapping triangles: the outline is unambiguous, and it can be
+# walked directly for edge sampling.
+def pine_outline(cx, base, half, height)
+  tw = [half * 0.09, 3.5].max
+  left = [
+    [cx - tw, base],
+    [cx - tw, base - height * 0.15],
+    [cx - half, base - height * 0.15],
+    [cx - half * 0.60, base - height * 0.44],
+    [cx - half * 0.82, base - height * 0.44],
+    [cx - half * 0.44, base - height * 0.70],
+    [cx - half * 0.62, base - height * 0.70],
+    [cx - half * 0.24, base - height * 0.89],
+  ]
+  right = left.reverse.map { |x, y| [2 * cx - x, y] }
+  left + [[cx, base - height]] + right
 end
+
+POLYS = TREES.map { |t| pine_outline(*t) }.freeze
 
 def inside?(poly, px, py)
   hit = false
@@ -56,36 +65,67 @@ def inside?(poly, px, py)
   hit
 end
 
-POLYS = TREES.flat_map { |t| tree_polygons(*t) }.freeze
-
-def in_shape?(px, py)
-  POLYS.any? { |poly| inside?(poly, px, py) }
+# Walk a polygon's perimeter, spacing points by arc length so long edges get
+# proportionally more of them.
+def edge_points(poly, count, rng)
+  segs = poly.each_with_index.map do |(x, y), i|
+    nx, ny = poly[(i + 1) % poly.length]
+    [x, y, nx, ny, Math.hypot(nx - x, ny - y)]
+  end
+  total = segs.sum { |s| s[4] }
+  out = []
+  count.times do
+    target = rng.rand * total
+    acc = 0.0
+    segs.each do |x, y, nx, ny, len|
+      if acc + len >= target
+        t = len.zero? ? 0.0 : (target - acc) / len
+        # A little jitter off the line keeps it from looking mechanical.
+        out << [x + (nx - x) * t + rng.rand(-1.4..1.4),
+                y + (ny - y) * t + rng.rand(-1.4..1.4)]
+        break
+      end
+      acc += len
+    end
+  end
+  out
 end
 
-# --- sampling ---------------------------------------------------------------
 def gaussian(rng, mean, sd)
   u1 = 1.0 - rng.rand
   u2 = rng.rand
   mean + sd * Math.sqrt(-2.0 * Math.log(u1)) * Math.cos(2.0 * Math::PI * u2)
 end
 
+# --- build the target set ---------------------------------------------------
 targets = []
 
-# A share of the dots settle along the forest floor so the shape is anchored.
-floor_n = (N_DOTS * 0.14).round
-floor_n.times do
-  targets << [rng.rand * WIDTH, BASELINE + rng.rand * 5.0]
-end
+floor_n = (N_DOTS * FLOOR_SHARE).round
+floor_n.times { targets << [rng.rand * WIDTH, BASELINE + rng.rand * 4.0] }
 
-# The rest are rejection-sampled from inside the pines.
-xs = TREES.map { |cx, _, half, _| [cx - half, cx + half] }
-min_x = xs.map(&:first).min
-max_x = xs.map(&:last).max
+remaining = N_DOTS - floor_n
+edge_n    = (remaining * EDGE_SHARE).round
+fill_n    = remaining - edge_n
 
-while targets.length < N_DOTS
-  px = min_x + rng.rand * (max_x - min_x)
-  py = BASELINE - rng.rand * 180.0
-  targets << [px, py] if in_shape?(px, py)
+# Share dots between trees in proportion to size, so the big one reads clearly.
+weights = TREES.map { |_, _, half, height| half * height }
+wsum    = weights.sum.to_f
+
+POLYS.each_with_index do |poly, i|
+  share = weights[i] / wsum
+  targets.concat(edge_points(poly, (edge_n * share).round, rng))
+
+  want = (fill_n * share).round
+  got  = 0
+  cx, base, half, height = TREES[i]
+  while got < want
+    px = cx - half + rng.rand * (half * 2)
+    py = base - rng.rand * height
+    if inside?(poly, px, py)
+      targets << [px, py]
+      got += 1
+    end
+  end
 end
 
 # --- emit -------------------------------------------------------------------
@@ -102,12 +142,10 @@ puts <<~HEAD
 HEAD
 
 targets.each do |x1, y1|
-  # x_0 ~ N(centre, sigma): a single blob, the way the demos draw it.
-  x0 = gaussian(rng, WIDTH / 2.0, 132.0)
-  y0 = gaussian(rng, HEIGHT / 2.0, 34.0)
-  r  = (1.15 + rng.rand * 1.15).round(2)
-  # A little spread in timing keeps the cloud from moving as one rigid block.
-  d  = (rng.rand * 1.4).round(2)
+  x0 = gaussian(rng, WIDTH / 2.0, 128.0)
+  y0 = gaussian(rng, HEIGHT / 2.0, 32.0)
+  r  = (1.05 + rng.rand * 0.85).round(2)
+  d  = (rng.rand * 1.1).round(2)
   printf(
     "      <circle class=\"flow-dot\" r=\"%s\" style=\"--x0:%.1fpx;--y0:%.1fpx;--x1:%.1fpx;--y1:%.1fpx;animation-delay:%ss\"/>\n",
     r, x0, y0, x1, y1, d
