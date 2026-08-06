@@ -4,3 +4,4 @@ _site/
 .sass-cache/
 vendor/
 Gemfile.lock
+STYLEGUIDE.md

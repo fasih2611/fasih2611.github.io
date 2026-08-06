@@ -1,0 +1,7 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" width="64" height="64" role="img" aria-label="Pine tree">
+  <rect width="64" height="64" fill="#D8C7A2"/>
+  <rect x="30" y="42" width="4" height="12" fill="#4A3720"/>
+  <polygon points="32,8 44,26 20,26" fill="#2F6B43"/>
+  <polygon points="32,18 47,38 17,38" fill="#356F49"/>
+  <polygon points="32,28 50,48 14,48" fill="#2A5E3B"/>
+</svg>

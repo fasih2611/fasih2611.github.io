@@ -1,0 +1,70 @@
+// Wooden / forest layer, applied on top of Garth.
+// Everything here is CSS-generated — no image files, nothing to load.
+
+// Fine vertical wood grain. Irregular stop widths keep it from reading
+// as stripes; alpha is kept very low so body text stays crisp.
+@mixin woodgrain($alpha: 0.035) {
+  background-image:
+    repeating-linear-gradient(
+      90deg,
+      rgba(74, 55, 32, $alpha) 0px,
+      rgba(74, 55, 32, 0) 2px,
+      rgba(74, 55, 32, 0) 5px,
+      rgba(74, 55, 32, $alpha * 0.7) 7px,
+      rgba(74, 55, 32, 0) 9px,
+      rgba(74, 55, 32, 0) 16px,
+      rgba(74, 55, 32, $alpha) 17px,
+      rgba(74, 55, 32, 0) 20px,
+      rgba(74, 55, 32, 0) 31px
+    ),
+    repeating-linear-gradient(
+      90deg,
+      rgba(120, 92, 55, $alpha * 0.5) 0px,
+      rgba(120, 92, 55, 0) 43px,
+      rgba(120, 92, 55, $alpha * 0.5) 71px,
+      rgba(120, 92, 55, 0) 113px
+    );
+}
+
+body {
+  @include woodgrain(0.04);
+}
+
+// Header reads as a darker plank, with a grain and a cut edge underneath.
+.header {
+  @include woodgrain(0.07);
+  border-bottom: 1px solid darken($backgroundColour, 22%);
+  box-shadow: inset 0 -3px 6px -4px rgba(59, 47, 33, 0.45);
+}
+
+// Treeline standing along the top of the footer.
+.footer {
+  position: relative;
+  padding-top: 3.4rem;
+  border-top: 0;
+
+  &::before {
+    content: "";
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 3rem;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 1200 60' preserveAspectRatio='none'%3E%3Cg fill='rgb(47,107,67)' fill-opacity='0.30'%3E%3Cpolygon points='20,60 40,14 60,60'/%3E%3Cpolygon points='58,60 76,28 94,60'/%3E%3Cpolygon points='92,60 116,6 140,60'/%3E%3Cpolygon points='138,60 154,32 170,60'/%3E%3Cpolygon points='166,60 190,18 214,60'/%3E%3Cpolygon points='210,60 228,38 246,60'/%3E%3Cpolygon points='242,60 266,10 290,60'/%3E%3Cpolygon points='286,60 304,30 322,60'/%3E%3Cpolygon points='318,60 342,20 366,60'/%3E%3Cpolygon points='362,60 380,40 398,60'/%3E%3Cpolygon points='394,60 418,8 442,60'/%3E%3Cpolygon points='438,60 456,34 474,60'/%3E%3Cpolygon points='470,60 494,16 518,60'/%3E%3Cpolygon points='514,60 532,36 550,60'/%3E%3Cpolygon points='546,60 570,12 594,60'/%3E%3Cpolygon points='590,60 608,30 626,60'/%3E%3Cpolygon points='622,60 646,22 670,60'/%3E%3Cpolygon points='666,60 684,42 702,60'/%3E%3Cpolygon points='698,60 722,10 746,60'/%3E%3Cpolygon points='742,60 760,32 778,60'/%3E%3Cpolygon points='774,60 798,18 822,60'/%3E%3Cpolygon points='818,60 836,38 854,60'/%3E%3Cpolygon points='850,60 874,6 898,60'/%3E%3Cpolygon points='894,60 912,30 930,60'/%3E%3Cpolygon points='926,60 950,20 974,60'/%3E%3Cpolygon points='970,60 988,40 1006,60'/%3E%3Cpolygon points='1002,60 1026,14 1050,60'/%3E%3Cpolygon points='1046,60 1064,34 1082,60'/%3E%3Cpolygon points='1078,60 1102,16 1126,60'/%3E%3Cpolygon points='1122,60 1140,36 1158,60'/%3E%3Cpolygon points='1154,60 1178,12 1202,60'/%3E%3C/g%3E%3C/svg%3E");
+    background-size: 100% 100%;
+    background-repeat: no-repeat;
+    pointer-events: none;
+  }
+}
+
+// Round logo sits on the plank; give it a carved edge.
+.logo {
+  box-shadow: 0 0 0 2px darken($backgroundColour, 25%);
+}
+
+// Post list entries read as stacked cards on the desk.
+.list--posts .item--post {
+  padding-bottom: 1rem;
+  border-bottom: 1px solid darken($backgroundColour, 12%);
+  &:last-child { border-bottom: 0; }
+}

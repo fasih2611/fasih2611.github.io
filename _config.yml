@@ -1,41 +1,59 @@
 # ---- Edit these ----
-title: Fasih Tariq
-tagline: Generative models, diffusion, and flow matching
+title: "Fasih Tariq"
 email: fasihtariq2611@gmail.com
 description: >-
   Personal site of Fasih Tariq — research on generative models,
   flow matching, and diffusion.
 github_username: fasih2611
-# Optional: delete the line if you don't want the link shown
-scholar_url:
-linkedin_url:
 # Drop a cv.pdf in assets/ and set this to /assets/cv.pdf to show a CV link
 cv_url:
 # --------------------
 
+remote_theme: daviddarnes/garth
+logo: "/assets/logo.svg"
+
 url: "https://fasih2611.github.io"
 baseurl: ""
+lang: en
+encoding: utf-8
 
 permalink: /blog/:year/:month/:day/:title/
+excerpt_separator: <!-- more -->
 
 # Build in your local timezone, and don't silently drop posts dated "today"
 # when it is still yesterday in UTC.
 timezone: Asia/Karachi
 future: true
 
+sass:
+  style: compressed
+
+collections:
+  posts:
+    title: Blog
+    output: true
+    description: "Notes on generative models, flow matching, and whatever the thesis turns up."
+
 plugins:
+  - jekyll-remote-theme
   - jekyll-feed
   - jekyll-seo-tag
 
-exclude:
-  - README.md
-  - Gemfile
-  - Gemfile.lock
-  - vendor
-
 defaults:
+  - scope:
+      path: ""
+      type: pages
+    values:
+      layout: page
   - scope:
       path: ""
       type: posts
     values:
       layout: post
+
+exclude:
+  - README.md
+  - STYLEGUIDE.md
+  - Gemfile
+  - Gemfile.lock
+  - vendor

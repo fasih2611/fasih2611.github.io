@@ -1,10 +1,7 @@
 ---
-layout: default
-title: Projects
+title: "Projects"
 permalink: /projects/
 ---
-
-# Projects
 
 <!-- Add or remove entries freely — this is just a markdown list. -->
 

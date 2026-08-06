@@ -1,0 +1,18 @@
+<!-- Overrides the theme's auto-generated nav so the order is fixed
+     and the labels are independent of the page titles. -->
+<nav class="nav">
+  <ul class="list list--nav">
+    <li class="item  item--nav{% if page.url == '/' %}  item--current{% endif %}">
+      <a href="{{ '/' | relative_url }}">About</a>
+    </li>
+    <li class="item  item--nav{% if page.url contains '/projects' %}  item--current{% endif %}">
+      <a href="{{ '/projects/' | relative_url }}">Projects</a>
+    </li>
+    <li class="item  item--nav{% if page.url contains '/blog' %}  item--current{% endif %}">
+      <a href="{{ '/blog/' | relative_url }}">Blog</a>
+    </li>
+    <li class="item  item--nav">
+      <a href="https://github.com/{{ site.github_username }}">GitHub</a>
+    </li>
+  </ul>
+</nav>
