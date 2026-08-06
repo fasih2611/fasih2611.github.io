@@ -1,42 +1,28 @@
-<!-- A pine treeline emerging from noise and dissolving back into it:
-     reverse diffusion, then forward. Pure inline SVG + SMIL, no image files
-     and no JavaScript. Colours come from _sass/_wood.scss. -->
+<!-- A pine treeline emerging from grain and dissolving back into it:
+     reverse diffusion, then forward. Inline SVG shapes driven entirely by CSS
+     keyframes (see _sass/_wood.scss) — no SMIL, no JavaScript, no image files.
+
+     The three grain layers carry different turbulence seeds and are flickered
+     out of phase, which reads as moving noise; the envelope on their parent
+     group fades the whole veil as the trees sharpen. -->
 <div class="diffusion-banner" aria-hidden="true">
   <svg viewBox="0 0 1200 240" preserveAspectRatio="xMidYMax slice" role="presentation">
     <defs>
-      <!-- Displaces the treeline by a noise field; scale animates to zero. -->
-      <filter id="denoise" x="-20%" y="-20%" width="140%" height="140%">
-        <feTurbulence type="fractalNoise" baseFrequency="0.028" numOctaves="3" seed="7" result="field">
-          <animate attributeName="baseFrequency"
-                   values="0.028;0.02;0.028" dur="14s" repeatCount="indefinite"/>
-        </feTurbulence>
-        <feDisplacementMap in="SourceGraphic" in2="field" xChannelSelector="R" yChannelSelector="G">
-          <animate attributeName="scale"
-                   values="120;120;0;0;120"
-                   keyTimes="0;0.06;0.42;0.76;1"
-                   dur="14s" repeatCount="indefinite"
-                   calcMode="spline"
-                   keySplines="0 0 1 1; .25 .1 .25 1; 0 0 1 1; .5 0 .75 1"/>
-        </feDisplacementMap>
+      <filter id="grain-a" x="0%" y="0%" width="100%" height="100%">
+        <feTurbulence type="fractalNoise" baseFrequency="0.75" numOctaves="4" seed="3"/>
+        <feColorMatrix type="saturate" values="0.12"/>
       </filter>
-
-      <!-- Static grain used as the visible noise veil. -->
-      <filter id="grain" x="0%" y="0%" width="100%" height="100%">
-        <feTurbulence type="fractalNoise" baseFrequency="0.7" numOctaves="4" seed="3"/>
-        <feColorMatrix type="saturate" values="0.15"/>
+      <filter id="grain-b" x="0%" y="0%" width="100%" height="100%">
+        <feTurbulence type="fractalNoise" baseFrequency="0.68" numOctaves="4" seed="17"/>
+        <feColorMatrix type="saturate" values="0.12"/>
+      </filter>
+      <filter id="grain-c" x="0%" y="0%" width="100%" height="100%">
+        <feTurbulence type="fractalNoise" baseFrequency="0.82" numOctaves="4" seed="41"/>
+        <feColorMatrix type="saturate" values="0.12"/>
       </filter>
     </defs>
 
-    <!-- Noise veil: opaque when the treeline is scrambled, gone when resolved. -->
-    <rect class="veil" x="0" y="0" width="1200" height="240" filter="url(#grain)">
-      <animate attributeName="opacity"
-               values="0.85;0.85;0;0;0.85"
-               keyTimes="0;0.06;0.42;0.76;1"
-               dur="14s" repeatCount="indefinite"/>
-    </rect>
-
-    <g class="treeline" filter="url(#denoise)">
-      <!-- back row, smaller and paler -->
+    <g class="treeline">
       <g class="row-back">
         <polygon points="70,210 100,120 130,210"/>
         <polygon points="170,210 196,140 222,210"/>
@@ -46,7 +32,6 @@
         <polygon points="980,210 1006,144 1032,210"/>
         <polygon points="1060,210 1094,118 1128,210"/>
       </g>
-      <!-- front row -->
       <g class="row-front">
         <polygon points="430,212 470,96 510,212"/>
         <polygon points="530,212 562,132 594,212"/>
@@ -57,8 +42,13 @@
         <polygon points="640,212 674,124 708,212"/>
         <polygon points="720,212 758,100 796,212"/>
       </g>
-      <!-- forest floor -->
       <rect class="floor" x="0" y="210" width="1200" height="30"/>
+    </g>
+
+    <g class="veils">
+      <rect class="veil v1" x="0" y="0" width="1200" height="240" filter="url(#grain-a)"/>
+      <rect class="veil v2" x="0" y="0" width="1200" height="240" filter="url(#grain-b)"/>
+      <rect class="veil v3" x="0" y="0" width="1200" height="240" filter="url(#grain-c)"/>
     </g>
   </svg>
 </div>

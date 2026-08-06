@@ -135,12 +135,54 @@ body {
   .row-front { fill: $linkColour; }
   .floor     { fill: darken($linkColour, 30%); }
   .veil      { fill: lighten($backgroundColour, 40%); }
+
+  // Trees sharpen out of the grain, hold, then blur back into it.
+  .treeline {
+    animation: denoise-trees 14s ease-in-out infinite;
+  }
+
+  // Envelope: how much grain is present at each point in the cycle.
+  .veils {
+    animation: denoise-veil 14s ease-in-out infinite;
+  }
+
+  // Each layer flickers on and off out of phase with the others, so the
+  // grain churns instead of sitting still.
+  .veil {
+    animation: grain-flicker 0.36s steps(1, end) infinite;
+  }
+  .v2 { animation-delay: 0.12s; }
+  .v3 { animation-delay: 0.24s; }
 }
 
-// Respect a reduced-motion preference: show the resolved treeline, no noise.
+@keyframes denoise-trees {
+  0%,  6%  { filter: blur(18px); opacity: 0.35; }
+  42%, 76% { filter: blur(0);    opacity: 1; }
+  100%     { filter: blur(18px); opacity: 0.35; }
+}
+
+@keyframes denoise-veil {
+  0%,  6%  { opacity: 0.9; }
+  42%, 76% { opacity: 0; }
+  100%     { opacity: 0.9; }
+}
+
+@keyframes grain-flicker {
+  0%,   33.3% { opacity: 1; }
+  33.4%, 100% { opacity: 0; }
+}
+
+// Reduced-motion: keep the idea, drop what the setting is actually for.
+// The 0.36s grain flicker is the objectionable part, so it stops and a single
+// static grain layer remains; the resolve itself just runs at half speed as a
+// slow fade. Set `animation: none` on .treeline and .veils here instead if you
+// want it fully static.
 @media (prefers-reduced-motion: reduce) {
   .diffusion-banner {
-    .treeline { filter: none !important; }
-    .veil { display: none; }
+    .treeline,
+    .veils { animation-duration: 28s; }
+    .veil { animation: none; opacity: 1; }
+    .v2,
+    .v3 { display: none; }
   }
 }
