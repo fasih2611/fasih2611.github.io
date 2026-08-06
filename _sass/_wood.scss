@@ -100,12 +100,14 @@ body {
 }
 
 
-// Diffusion banner
-// ----------------
-// A treeline scrambled by a noise field, resolving and dissolving on a loop.
+// Flow-matching banner
+// --------------------
+// Samples from a Gaussian transported along straight paths onto a treeline,
+// the way flow matching is usually first drawn. Each dot's endpoints come from
+// tools/gen_banner.rb as CSS custom properties; the interpolation between them
+// is x_t = (1-t)x_0 + t x_1, the rectified-flow / OT path.
 
-.diffusion-banner {
-  position: relative;
+.flow-banner {
   margin: 0 0 2rem;
   border-radius: 4px;
   overflow: hidden;
@@ -115,74 +117,29 @@ body {
   svg {
     display: block;
     width: 100%;
-    height: 190px;
+    height: auto;
   }
 
-  // Fade the bottom edge into the page so the banner sits in the wood
-  // rather than on top of it.
-  &::after {
-    content: "";
-    position: absolute;
-    left: 0;
-    right: 0;
-    bottom: 0;
-    height: 40%;
-    background: linear-gradient(to bottom, rgba(36, 27, 18, 0), $backgroundColour);
-    pointer-events: none;
+  .flow-dot {
+    fill: $linkColour;
+    // `both` matters: each dot has its own animation-delay, and without a fill
+    // mode it renders untransformed — all 320 dots stacked at the origin — for
+    // the first second or so after the page loads.
+    animation: flow-transport 12s ease-in-out infinite both;
   }
-
-  .row-back  { fill: darken($linkColour, 22%); }
-  .row-front { fill: $linkColour; }
-  .floor     { fill: darken($linkColour, 30%); }
-  .veil      { fill: lighten($backgroundColour, 40%); }
-
-  // Trees sharpen out of the grain, hold, then blur back into it.
-  .treeline {
-    animation: denoise-trees 14s ease-in-out infinite;
-  }
-
-  // Envelope: how much grain is present at each point in the cycle.
-  .veils {
-    animation: denoise-veil 14s ease-in-out infinite;
-  }
-
-  // Each layer flickers on and off out of phase with the others, so the
-  // grain churns instead of sitting still.
-  .veil {
-    animation: grain-flicker 0.36s steps(1, end) infinite;
-  }
-  .v2 { animation-delay: 0.12s; }
-  .v3 { animation-delay: 0.24s; }
 }
 
-@keyframes denoise-trees {
-  0%,  6%  { filter: blur(18px); opacity: 0.35; }
-  42%, 76% { filter: blur(0);    opacity: 1; }
-  100%     { filter: blur(18px); opacity: 0.35; }
+// Dim and scattered at t=0, bright and resolved at t=1, then back.
+@keyframes flow-transport {
+  0%,   6%  { transform: translate(var(--x0), var(--y0)); opacity: 0.30; }
+  46%, 74%  { transform: translate(var(--x1), var(--y1)); opacity: 1; }
+  100%      { transform: translate(var(--x0), var(--y0)); opacity: 0.30; }
 }
 
-@keyframes denoise-veil {
-  0%,  6%  { opacity: 0.9; }
-  42%, 76% { opacity: 0; }
-  100%     { opacity: 0.9; }
-}
-
-@keyframes grain-flicker {
-  0%,   33.3% { opacity: 1; }
-  33.4%, 100% { opacity: 0; }
-}
-
-// Reduced-motion: keep the idea, drop what the setting is actually for.
-// The 0.36s grain flicker is the objectionable part, so it stops and a single
-// static grain layer remains; the resolve itself just runs at half speed as a
-// slow fade. Set `animation: none` on .treeline and .veils here instead if you
-// want it fully static.
+// Reduced-motion: same transport, run slowly. Set `animation: none` on
+// .flow-dot here instead if you want the treeline to sit still.
 @media (prefers-reduced-motion: reduce) {
-  .diffusion-banner {
-    .treeline,
-    .veils { animation-duration: 28s; }
-    .veil { animation: none; opacity: 1; }
-    .v2,
-    .v3 { display: none; }
+  .flow-banner .flow-dot {
+    animation-duration: 26s;
   }
 }
