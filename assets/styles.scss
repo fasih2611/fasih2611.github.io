@@ -2,5 +2,19 @@
 title: false
 ---
 
-@import "garth";
-@import "wood";
+// This mirrors the theme's own _sass/garth.scss import list rather than
+// importing "garth" wholesale. Dart Sass resolves imports relative to the
+// importing file first, so importing garth.scss would always pull the theme's
+// _colors.scss and silently ignore ours. Importing from here — a file with no
+// sibling partials — forces every name through the load path, where our
+// _sass/ takes precedence over the theme's.
+
+@import
+  "normalize",
+  "colors",        // ours: _sass/_colors.scss
+  "sassline-base",
+  "syntax",
+  "flex",
+  "theme",
+  "wood"           // ours: _sass/_wood.scss
+;
