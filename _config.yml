@@ -1,13 +1,11 @@
-# ---- Edit these ----
 title: "Fasih Tariq"
 email: fasihtariq2611@gmail.com
 description: >-
-  Personal site of Fasih Tariq — research on generative models,
-  flow matching, and diffusion.
+  Personal site of Fasih Tariq. Computer vision: detection and recognition,
+  large-scale video pipelines, and generative models.
 github_username: fasih2611
 # Drop a cv.pdf in assets/ and set this to /assets/cv.pdf to show a CV link
 cv_url:
-# --------------------
 
 remote_theme: daviddarnes/garth
 logo: "/assets/logo.svg"
@@ -32,7 +30,7 @@ collections:
   posts:
     title: Blog
     output: true
-    description: "Notes on generative models, flow matching, and whatever the thesis turns up."
+    description: "Notes on computer vision, the systems engineering underneath it, and generative models."
 
 plugins:
   - jekyll-remote-theme

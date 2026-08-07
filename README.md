@@ -27,8 +27,9 @@ Then commit and push — GitHub rebuilds the site in about a minute.
 | Name, email, links, site title | `_config.yml` |
 | About page | `index.md` |
 | Projects list | `projects.md` |
-| Styling | `assets/css/style.css` |
-| Page shell / nav | `_layouts/default.html` |
+| Styling | `assets/styles.scss`, `_sass/` |
+| Page shell | `_layouts/default.html` |
+| Nav links | `_includes/site-nav.html` |
 
 ## Local preview (optional)
 

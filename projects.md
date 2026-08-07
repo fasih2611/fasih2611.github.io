@@ -3,8 +3,6 @@ title: "Projects"
 permalink: /projects/
 ---
 
-<!-- Add or remove entries freely — this is just a markdown list. -->
-
 ### [DDPM_torch](https://github.com/fasih2611/DDPM_torch)
 
 Denoising diffusion probabilistic models implemented in PyTorch, written from
